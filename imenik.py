@@ -43,9 +43,7 @@ class ImenikApp:
         self.telefon_entry = tk.Entry(unos_frame)
         self.telefon_entry.grid(row=2, column=1, padx=5, pady=5, sticky="EW")
 
-        tk.Button(unos_frame, text="Dodaj kontakt", command=self.dodaj_kontakt).grid(
-            row=3, column=0, columnspan=2, pady=10
-        )
+        tk.Button(unos_frame, text="Dodaj kontakt", command=self.dodaj_kontakt).grid(row=3, column=0, columnspan=2, pady=10)
 
         self.listbox = tk.Listbox(prikaz_frame)
         self.listbox.grid(row=0, column=0, sticky="NSEW")
@@ -54,21 +52,17 @@ class ImenikApp:
         scrollbar.grid(row=0, column=1, sticky="NS")
         self.listbox.config(yscrollcommand=scrollbar.set)
 
-        tk.Button(gumbi_frame, text="Spremi kontakte", command=self.spremi_kontakte).grid(
-            row=0, column=0, padx=5, pady=5
-        )
-        tk.Button(gumbi_frame, text="Učitaj kontakte", command=self.ucitaj_kontakte).grid(
-            row=0, column=1, padx=5, pady=5
-        )
+        tk.Button(gumbi_frame, text="Spremi kontakte", command=self.spremi_kontakte).grid(row=0, column=0, padx=5, pady=5)
+        tk.Button(gumbi_frame, text="Učitaj kontakte", command=self.ucitaj_kontakte).grid(row=0, column=1, padx=5, pady=5)
 
         self.kontakti = []
 
         self.ucitaj_kontakte()
 
     def dodaj_kontakt(self):
-        ime = self.ime_entry.get().strip()
-        email = self.email_entry.get().strip()
-        telefon = self.telefon_entry.get().strip()
+        ime = self.ime_entry.get()
+        email = self.email_entry.get()
+        telefon = self.telefon_entry.get()
 
         if not ime or not email or not telefon:
             return
@@ -106,4 +100,5 @@ if __name__ == "__main__":
     root = tk.Tk()
     app = ImenikApp(root)
     root.mainloop()
+
 

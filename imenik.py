@@ -1,4 +1,5 @@
 import tkinter as tk
+from tkinter import messagebox
 import csv
 
 class Kontakt:
@@ -31,7 +32,7 @@ class ImenikApp:
         gumbi_frame = tk.Frame(self.root, padx=10, pady=10)
         gumbi_frame.grid(row=2, column=0, sticky="EW")
 
-        tk.Label(unos_frame, text="Ime i prezime:").grid(row=0, column=0, sticky="W")
+        tk.Label(unos_frame, text="Ime:").grid(row=0, column=0, sticky="W")
         self.ime_entry = tk.Entry(unos_frame)
         self.ime_entry.grid(row=0, column=1, padx=5, pady=5, sticky="EW")
 
@@ -63,6 +64,17 @@ class ImenikApp:
         ime = self.ime_entry.get()
         email = self.email_entry.get()
         telefon = self.telefon_entry.get()
+
+        if len(self.ime_entry.get())<3:
+            messagebox.showerror('Greška. Ime mora imati barem tri slova.')
+            return
+        if '@' and '.com' not in email:
+            messagebox.showerror('Greška. Email mora sadržavati znak "@" i ".com".')
+            return
+        if not telefon.isdigit() or len(telefon) not in (9,10):
+            messagebox.showerror('Greška. Telefon mora sadžavati točno 9 ili 10 znamenki.')
+            return
+
 
         if not ime or not email or not telefon:
             return
@@ -100,5 +112,6 @@ if __name__ == "__main__":
     root = tk.Tk()
     app = ImenikApp(root)
     root.mainloop()
+
 
 

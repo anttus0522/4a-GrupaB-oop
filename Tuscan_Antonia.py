@@ -1,7 +1,7 @@
 # Kratka provjera – Evidencija učenika (CSV fokus, XML bonus)
 # Vrijeme: 20 min
 #1) Nakon što ugasimo program ili isključimo računalo sve što je spremljeno u radnoj memoriji (RAM) se briše, zato koristimo trajnu pohranu kako bi nam podatci ostali.
-#2) CSV je brz i jednostavan i koristi tablice, dok je XML složeniji, ali potpuni izvoz i uvoz podataka, koristi tagove.
+#2) CSV je brz i jednostavan i koristi tablice i zareze, dok je XML složeniji, ali potpuni izvoz i uvoz podataka, ima hjerarhijsku strukturu i koristi tagove.
 #3) Zato što to program radi automatski, manje su šanse za grešku nego kad to ručno radimo.
 #4) Listbox se treba izbrisati kako bi se izbjeglo dupliciranje podataka.
 #5) Prednost je da csv.DictWriter/DictReader zapisuje u CSV datoteku koristeći retke podataka koji su već formatirani kao rječnici, jednostavniji je i pregledniji način nego ručni split(',')
@@ -191,3 +191,4 @@ if __name__ == "__main__":
     root = tk.Tk()
     app = EvidencijaApp(root)
     root.mainloop()
+

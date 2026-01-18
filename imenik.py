@@ -1,117 +1,101 @@
-import tkinter as tk
-from tkinter import messagebox
-import csv
-
-class Kontakt:
-    def __init__(self, ime, email, telefon):
-        self.ime = ime
-        self.email = email
-        self.telefon = telefon
-
-    def __str__(self):
-        return f"{self.ime} - {self.email} {self.telefon}"
-
-class ImenikApp:
-    def __init__(self, root):
-        self.root = root
-        self.root.title("Imenik kontakata")
-        self.root.geometry("500x400")
-
-        self.root.columnconfigure(0, weight=1)
-        self.root.rowconfigure(1, weight=1)
-
-        unos_frame = tk.Frame(self.root, padx=10, pady=10)
-        unos_frame.grid(row=0, column=0, sticky="EW")
-
-        prikaz_frame = tk.Frame(self.root, padx=10, pady=10)
-        prikaz_frame.grid(row=1, column=0, sticky="NSEW")
-
-        prikaz_frame.columnconfigure(0, weight=1)
-        prikaz_frame.rowconfigure(0, weight=1)
-
-        gumbi_frame = tk.Frame(self.root, padx=10, pady=10)
-        gumbi_frame.grid(row=2, column=0, sticky="EW")
-
-        tk.Label(unos_frame, text="Ime:").grid(row=0, column=0, sticky="W")
-        self.ime_entry = tk.Entry(unos_frame)
-        self.ime_entry.grid(row=0, column=1, padx=5, pady=5, sticky="EW")
-
-        tk.Label(unos_frame, text="Email:").grid(row=1, column=0, sticky="W")
-        self.email_entry = tk.Entry(unos_frame)
-        self.email_entry.grid(row=1, column=1, padx=5, pady=5, sticky="EW")
-
-        tk.Label(unos_frame, text="Telefon:").grid(row=2, column=0, sticky="W")
-        self.telefon_entry = tk.Entry(unos_frame)
-        self.telefon_entry.grid(row=2, column=1, padx=5, pady=5, sticky="EW")
-
-        tk.Button(unos_frame, text="Dodaj kontakt", command=self.dodaj_kontakt).grid(row=3, column=0, columnspan=2, pady=10)
-
-        self.listbox = tk.Listbox(prikaz_frame)
-        self.listbox.grid(row=0, column=0, sticky="NSEW")
-
-        scrollbar = tk.Scrollbar(prikaz_frame, orient="vertical", command=self.listbox.yview)
-        scrollbar.grid(row=0, column=1, sticky="NS")
-        self.listbox.config(yscrollcommand=scrollbar.set)
-
-        tk.Button(gumbi_frame, text="Spremi kontakte", command=self.spremi_kontakte).grid(row=0, column=0, padx=5, pady=5)
-        tk.Button(gumbi_frame, text="Učitaj kontakte", command=self.ucitaj_kontakte).grid(row=0, column=1, padx=5, pady=5)
-
-        self.kontakti = []
-
-        self.ucitaj_kontakte()
-
-    def dodaj_kontakt(self):
-        ime = self.ime_entry.get()
-        email = self.email_entry.get()
-        telefon = self.telefon_entry.get()
-
-        if len(self.ime_entry.get())<3:
-            messagebox.showerror('Greška. Ime mora imati barem tri slova.')
-            return
-        if '@' and '.com' not in email:
-            messagebox.showerror('Greška. Email mora sadržavati znak "@" i ".com".')
-            return
-        if not telefon.isdigit() or len(telefon) not in (9,10):
-            messagebox.showerror('Greška. Telefon mora sadžavati točno 9 ili 10 znamenki.')
-            return
-
-
-        if not ime or not email or not telefon:
-            return
-
-        kontakt = Kontakt(ime, email, telefon)
-        self.kontakti.append(kontakt)
-        self.osvjezi_prikaz()
-
-        self.ime_entry.delete(0, tk.END)
-        self.email_entry.delete(0, tk.END)
-        self.telefon_entry.delete(0, tk.END)
-
-    def osvjezi_prikaz(self):
-        self.listbox.delete(0, tk.END)
-        for kontakt in self.kontakti:
-            self.listbox.insert(tk.END, kontakt)
-
-    def spremi_kontakte(self):
-        with open("kontakti.csv", "w", newline="", encoding="utf-8") as file:
-            writer = csv.writer(file)
-            for kontakt in self.kontakti:
-                writer.writerow([kontakt.ime, kontakt.email, kontakt.telefon])
-
-    def ucitaj_kontakte(self):
-        try:
-            with open("kontakti.csv", "r", encoding="utf-8") as file:
-                reader = csv.reader(file)
-                self.kontakti = [Kontakt(ime, email, telefon) for ime, email, telefon in reader]
-                self.osvjezi_prikaz()
-        except FileNotFoundError:
-            self.kontakti = []
-
-
-if __name__ == "__main__":
-    root = tk.Tk()
-    app = ImenikApp(root)
-    root.mainloop()
+import sqlite3
 
 
 
+def inicijalizacija():
+    konekcija = sqlite3.connect("Imenik.db")
+    kursor = konekcija.cursor()
+
+    sql_naredba = """
+    CREATE TABLE IF NOT EXISTS Kontakti (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        ime_prezime TEXT NOT NULL,
+        broj_mobitela TEXT NOT NULL
+    );
+    """
+
+    kursor.execute(sql_naredba)
+    konekcija.commit()
+    konekcija.close()
+
+
+
+def unesi_kontakt():
+    ime = input("Unesi ime i prezime: ")
+    broj = input("Unesi broj mobitela: ")
+
+    conn = sqlite3.connect("Imenik.db")
+    cur = conn.cursor()
+
+    sql = "INSERT INTO Kontakti (ime_prezime, broj_mobitela) VALUES (?, ?)"
+    cur.execute(sql, (ime, broj))
+
+    conn.commit()
+    conn.close()
+
+    print("Kontakt je uspješno dodan!")
+
+
+def ispisi_kontakte():
+    print("\n--- KONTAKTI ---")
+
+    conn = sqlite3.connect("Imenik.db")
+    cur = conn.cursor()
+
+    cur.execute("SELECT * FROM Kontakti")
+    svi_kontakti = cur.fetchall()
+
+    print(f"{'ID':<5} | {'IME I PREZIME':<25} | {'BROJ'}")
+    print("-" * 45)
+
+    for red in svi_kontakti:
+        print(f"{red[0]:<5} | {red[1]:<25} | {red[2]}")
+
+    conn.close()
+
+
+def obrisi_kontakt():
+    ispisi_kontakte()
+    id_za_brisanje = input("\nUnesi ID kontakta za brisanje: ")
+
+    conn = sqlite3.connect("Imenik.db")
+    cur = conn.cursor()
+
+    sql = "DELETE FROM Kontakti WHERE id = ?"
+    cur.execute(sql, (id_za_brisanje,))
+
+    if cur.rowcount > 0:
+        print("Kontakt je obrisan.")
+    else:
+        print("Ne postoji kontakt s tim ID-em.")
+
+    conn.commit()
+    conn.close()
+
+
+
+def izbornik():
+    while True:
+        print("\n--- IZBORNIK ---")
+        print("1. Unos novog kontakta")
+        print("2. Ispis svih kontakata")
+        print("3. Brisanje kontakta")
+        print("4. Izlaz")
+
+        izbor = input("Odaberi opciju (1-4): ")
+
+        if izbor == "1":
+            unesi_kontakt()
+        elif izbor == "2":
+            ispisi_kontakte()
+        elif izbor == "3":
+            obrisi_kontakt()
+        elif izbor == "4":
+            print("Izlaz iz programa. Doviđenja!")
+            break
+        else:
+            print("Nevažeći odabir. Pokušaj ponovno.")
+
+
+inicijalizacija()
+izbornik()

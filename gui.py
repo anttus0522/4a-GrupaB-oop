@@ -4,13 +4,13 @@ import requests
 
 BASE_URL = "http://127.0.0.1:5000"
 
-# ---------------- GLOBAL STATE ----------------
+
 user_id = None
 books = []
 displayed_books = []
 book_ids = []
 
-# ---------------- UI COLORS ----------------
+
 BG = "#F6F1FF"
 CARD = "#FFFFFF"
 PRIMARY = "#8B5CF6"
@@ -21,22 +21,20 @@ READING = "#2563EB"
 PLAN = "#F43F5E"
 CARD_BORDER = "#D8B4FE"
 
-# ---------------- UI FONTS ----------------
+
 FONT_TITLE = ("Segoe UI Semibold", 20)
 FONT_SUBTITLE = ("Segoe UI", 12)
 FONT_BODY = ("Segoe UI", 11)
 FONT_SMALL = ("Segoe UI", 10)
 FONT_MONO = ("Courier New", 12)
 
-# ---------------- ROOT ----------------
+
 root = tk.Tk()
 root.title("📚 BookTakeover")
 root.geometry("900x750")
 root.configure(bg=BG)
 
-# =================================================
-# LOGIN UI
-# =================================================
+
 login_frame = tk.Frame(root, bg=CARD, padx=30, pady=30)
 login_frame.pack(expand=True)
 
@@ -47,23 +45,21 @@ tk.Label(login_frame, text="📚 BookTakeover",
 entry = tk.Entry(login_frame, font=("Segoe UI", 12))
 entry.pack(pady=10)
 
-# =================================================
-# MAIN FRAME (VAŽNO - DEFINIRAN PRIJE KORIŠTENJA)
-# =================================================
+
 main_frame = tk.Frame(root, bg=BG)
 
-# SIDEBAR + CONTENT
+
 sidebar = tk.Frame(main_frame, bg="#EDE7FF", width=200)
 content = tk.Frame(main_frame, bg=BG)
 
-# HEADER (ASCII)
+
 header = tk.Label(content, text="""
 ╔══════════════════════╗
    📚 BookTakeover
 ╚══════════════════════╝
 """, font=("Courier", 12), bg=BG)
 
-# SEARCH
+
 search_var = tk.StringVar()
 search_entry = tk.Entry(content, textvariable=search_var,
                         font=FONT_BODY, width=34, bd=2, relief="groove")
@@ -71,7 +67,7 @@ search_entry = tk.Entry(content, textvariable=search_var,
 search_btn = tk.Button(content, text="Pretraži", bg=ACCENT, fg="white",
                        font=FONT_SUBTITLE, relief="flat", activebackground="#ec4899")
 
-# LISTBOX
+
 listbox = tk.Listbox(
     content,
     width=62,
@@ -82,7 +78,7 @@ listbox = tk.Listbox(
     relief="sunken"
 )
 
-# BUTTON FRAME
+
 btn_frame = tk.Frame(content, bg=BG)
 
 rate_btn = tk.Button(btn_frame, text="⭐ Ocijeni", bg=ACCENT, fg="white", width=15,
@@ -90,9 +86,7 @@ rate_btn = tk.Button(btn_frame, text="⭐ Ocijeni", bg=ACCENT, fg="white", width
 status_btn = tk.Button(btn_frame, text="📖 Status", bg=PRIMARY, fg="white", width=15,
                        relief="flat", activebackground="#7c3aed")
 
-# =================================================
-# FUNCTIONS
-# =================================================
+
 
 def show_server_error(message):
     messagebox.showerror("Greška", f"Ne mogu se spojiti na server:\n{message}")
@@ -114,7 +108,7 @@ def login():
 
         login_frame.pack_forget()
 
-        # PRIKAZ APP-a
+        
         main_frame.pack(fill="both", expand=True)
         sidebar.pack(side="left", fill="y")
         content.pack(side="right", fill="both", expand=True)
@@ -125,9 +119,7 @@ def login():
         show_server_error(str(exc))
 
 
-# =================================================
-# LOAD BOOKS
-# =================================================
+
 def load_books():
     global books, displayed_books, book_ids
 
@@ -151,9 +143,7 @@ def load_books():
         show_server_error(str(exc))
 
 
-# =================================================
-# SEARCH
-# =================================================
+
 def search_books():
     global displayed_books, book_ids
 
@@ -179,9 +169,7 @@ def search_books():
 
 search_btn.config(command=search_books)
 
-# =================================================
-# RATING
-# =================================================
+
 def rate_book():
     sel = listbox.curselection()
     if not sel or not book_ids:
@@ -224,9 +212,7 @@ def rate_book():
 
 rate_btn.config(command=rate_book)
 
-# =================================================
-# ADD BOOK
-# =================================================
+
 def add_book():
     popup = tk.Toplevel(root)
     popup.title("Dodaj knjigu")
@@ -266,9 +252,7 @@ def add_book():
               relief="flat", command=submit).pack(pady=15)
 
 
-# =================================================
-# STATUS
-# =================================================
+
 def set_status():
     sel = listbox.curselection()
     if not sel or not book_ids:
@@ -308,9 +292,7 @@ def set_status():
 
 status_btn.config(command=set_status)
 
-# =================================================
-# MY LIBRARY
-# =================================================
+
 def my_library():
     popup = tk.Toplevel(root)
     popup.configure(bg=BG)
@@ -343,9 +325,7 @@ def my_library():
                  bg=BG, font=FONT_BODY).pack(anchor="w", pady=2)
 
 
-# =================================================
-# ABOUT
-# =================================================
+
 def show_about():
     popup = tk.Toplevel(root)
     popup.title("O aplikaciji")
@@ -356,9 +336,7 @@ def show_about():
              bg=BG, justify="left", font=FONT_BODY).pack(padx=20, pady=(0, 20), anchor="w")
 
 
-# =================================================
-# SIDEBAR BUTTONS
-# =================================================
+
 tk.Button(sidebar, text="📚 Knjige",
           bg=PRIMARY, fg="white", font=FONT_BODY,
           relief="flat", command=load_books).pack(fill="x", pady=(20, 5), padx=10)
@@ -376,9 +354,7 @@ tk.Button(sidebar, text="ℹ O aplikaciji",
           relief="flat", command=show_about).pack(fill="x", pady=5, padx=10)
 
 
-# =================================================
-# CONTENT PACKING
-# =================================================
+
 header.pack(pady=10)
 search_entry.pack(pady=5)
 search_btn.pack(pady=5)
@@ -389,11 +365,11 @@ rate_btn.grid(row=0, column=0, padx=5)
 status_btn.grid(row=0, column=1, padx=5)
 
 
-# LOGIN BUTTON
+
 tk.Button(login_frame, text="Prijava",
           bg=PRIMARY, fg="white", font=FONT_SUBTITLE,
           relief="flat", command=login).pack(pady=10)
 
 
-# =================================================
+
 root.mainloop()
